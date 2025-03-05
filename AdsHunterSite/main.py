@@ -1,6 +1,5 @@
-from flask import Flask, render_template, redirect, url_for, request, flash
-
-app = Flask(__name__)
+from flask import render_template, redirect, url_for, request, flash
+from __init__ import app  # Importando o app do __init__.py
 
 # Rota da tela de login
 @app.route("/", methods=["GET", "POST"])
