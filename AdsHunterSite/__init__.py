@@ -7,3 +7,5 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 app.config["SECRET_KEY"] = "da80480a59b1f71b360ea403dcd0aa90"
 
+# Importe o main.py para registrar as rotas
+from AdsHunterSite import main
