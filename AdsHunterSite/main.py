@@ -1,11 +1,10 @@
 import os
-from flask import Flask, request, jsonify, redirect, url_for, flash, render_template
+from flask import request, jsonify, redirect, url_for, flash, render_template
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 import json
-
-app = Flask(__name__)
+from AdsHunterSite import app  # Importa o app do __init__.py
 
 # Configurações do Google Sheets (lidas das variáveis de ambiente)
 GOOGLE_SHEETS_CREDENTIALS = json.loads(os.getenv("GOOGLE_SHEETS_CREDENTIALS"))  # Conteúdo do JSON
@@ -46,19 +45,17 @@ def verificar_acesso(email):
         print(f"Erro ao verificar acesso: {str(e)}")
         return False
 
-
-
-
+# Rotas
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         email = request.form.get("email")
         senha = request.form.get("senha")
 
-        if email == senha:
+        if verificar_acesso(email):  # Usa a função de validação
             return redirect(url_for("produtos"))
         else:
-            flash("Acesso negado. Verifique seu email.", "danger")
+            flash("Acesso negado. Você não tem uma assinatura ativa.", "danger")
 
     return render_template("login.html")
 
@@ -69,7 +66,3 @@ def produtos():
 @app.route("/logout")
 def logout():
     return redirect(url_for("login"))
-
-if __name__ == "__main__":
-    app.run(debug=True)
-
