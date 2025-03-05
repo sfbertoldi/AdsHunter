@@ -1,5 +1,4 @@
 from AdsHunterSite import app  # Importa o app corretamente
-
 from flask import render_template, redirect, url_for, request, flash
 
 @app.route("/", methods=["GET", "POST"])
