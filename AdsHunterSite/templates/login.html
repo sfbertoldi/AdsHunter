@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - AdsHunter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #111;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            text-align: center;
+            width: 320px;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo-container img {
+            max-width: 150px;
+            display: block;
+            margin: 0 auto;
+        }
+
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        td {
+            padding: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            background-color: #222;
+            color: #fff;
+        }
+
+        input:focus {
+            outline: 2px solid #00bcd4;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            background-color: #00bcd4;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        button:hover {
+            background-color: #0097a7;
+        }
+
+        .error {
+            color: #ff4d4d;
+            margin-bottom: 10px;
+        }
+
+        .forgot-password {
+            margin-top: 10px;
+            color: #00bcd4;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .forgot-password:hover {
+            color: #0097a7;
+        }
+
+        .forgot-message {
+            margin-top: 10px;
+            color: #fff;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 20px;">
+        <img src="{{ url_for('static', filename='logo3.png') }}" alt="Logo do AdsHunter" style="max-width: 150px;">
+        </div>
+        <h2>AdsHunter</h2>
+        <h3>Faça seu login</h3>
+        <!-- Mensagem de erro -->
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+
+        <!-- Formulário de login -->
+        <form method="POST">
+            <table>
+                <tr>
+                    <td><label for="email">E-mail:</label></td>
+                </tr>
+                <tr>
+                    <td><input type="email" id="email" name="email" required></td>
+                </tr>
+                <tr>
+                    <td><label for="senha">Senha:</label></td>
+                </tr>
+                <tr>
+                    <td><input type="password" id="senha" name="senha" required></td>
+                </tr>
+                <tr>
+                    <td><button type="submit">Entrar</button></td>
+                </tr>
+            </table>
+        </form>
+
+        <!-- Botão "Esqueceu o e-mail ou senha?" -->
+        <div class="forgot-password" onclick="showForgotMessage()">Esqueceu o e-mail ou senha?</div>
+
+        <!-- Mensagem de ajuda -->
+        <div id="forgot-message" class="forgot-message" style="display: none;">
+            Lembrando: tanto o e-mail quanto a senha são ambos o próprio e-mail que você usa na Kiwify.
+        </div>
+    </div>
+
+    <script>
+        // Função para exibir a mensagem de ajuda
+        function showForgotMessage() {
+            var message = document.getElementById("forgot-message");
+            if (message.style.display === "none") {
+                message.style.display = "block";
+            } else {
+                message.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
+
