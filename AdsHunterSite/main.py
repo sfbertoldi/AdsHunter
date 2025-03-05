@@ -52,10 +52,15 @@ def login():
         email = request.form.get("email")
         senha = request.form.get("senha")
 
-        if verificar_acesso(email):  # Usa a função de validação
-            return redirect(url_for("produtos"))
+        # Verifica se o e-mail e a senha são iguais
+        if email == senha:
+            # Verifica se o e-mail está na planilha do Google Sheets
+            if verificar_acesso(email):
+                return redirect(url_for("produtos"))
+            else:
+                flash("Acesso negado. E-mail não encontrado ou sem assinatura ativa.", "danger")
         else:
-            flash("Acesso negado. Você não tem uma assinatura ativa.", "danger")
+            flash("E-mail e senha devem ser iguais.", "danger")
 
     return render_template("login.html")
 
