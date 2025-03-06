@@ -105,10 +105,10 @@ def receber_webhook():
         # Log dos cabeçalhos recebidos
         logger.info(f"Cabeçalhos recebidos: {request.headers}")
 
-        # Obtém a assinatura do cabeçalho
-        signature = request.headers.get("X-Kiwify-Signature")
+        # Obtém a assinatura da query string
+        signature = request.args.get("signature")
         if not signature:
-            logger.error("Assinatura ausente no cabeçalho")
+            logger.error("Assinatura ausente na query string")
             return jsonify({"error": "Assinatura ausente"}), 400
 
         # Obtém o corpo da requisição (payload)
