@@ -1,38 +1,51 @@
 import os
-import json
+from datetime import datetime
 from flask import request, jsonify, redirect, url_for, flash, render_template
-from AdsHunterSite import app  # Importa o app do __init__.py
-
-# Caminho do arquivo JSON onde armazenaremos os assinantes
-ASSINATURAS_PATH = os.path.join(os.path.dirname(__file__), "assinaturas.json")
+from AdsHunterSite import app, get_db_connection  # Importa o app e a conexão do banco de dados do __init__.py
 
 
-def carregar_assinaturas():
-    """Carrega os assinantes do JSON."""
-    if not os.path.exists(ASSINATURAS_PATH):
-        return []
-    with open(ASSINATURAS_PATH, "r", encoding="utf-8") as file:
-        try:
-            return json.load(file)
-        except json.JSONDecodeError:
-            return []
-
-
-def salvar_assinaturas(assinaturas):
-    """Salva os assinantes no JSON."""
-    with open(ASSINATURAS_PATH, "w", encoding="utf-8") as file:
-        json.dump(assinaturas, file, indent=4, ensure_ascii=False)
+# Funções para interagir com o banco de dados
+def salvar_assinatura(email, status):
+    """Salva ou atualiza uma assinatura no banco de dados."""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute(
+        """O 
+        INSERT INTassinaturas (email, status, updated_at)
+        VALUES (%s, %s, %s)
+        ON CONFLICT (email) DO UPDATE
+        SET status = EXCLUDED.status, updated_at = EXCLUDED.updated_at
+        """,
+        (email, status, datetime.utcnow())
+    )
+    conn.commit()
+    cur.close()
+    conn.close()
 
 
 def verificar_acesso(email):
-    """Verifica se o usuário tem uma assinatura ativa no JSON."""
-    assinaturas = carregar_assinaturas()
-    for ass in assinaturas:
-        if ass["email"] == email and ass["status"] == "active":
-            return True
+    """Verifica se o usuário tem uma assinatura ativa no banco de dados."""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute(
+        """
+        SELECT status FROM assinaturas
+        WHERE email = %s
+        ORDER BY updated_at DESC
+        LIMIT 1
+        """,
+        (email,)
+    )
+    resultado = cur.fetchone()
+    cur.close()
+    conn.close()
+
+    if resultado and resultado["status"] == "active":
+        return True
     return False
 
 
+# Rotas da aplicação
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -62,7 +75,7 @@ def logout():
 
 @app.route("/webhook", methods=["POST"])
 def receber_webhook():
-    """Recebe os dados da Kiwify e atualiza o JSON de assinaturas."""
+    """Recebe os dados da Kiwify e atualiza o banco de dados."""
     try:
         data = request.get_json()
         if not data:
@@ -74,20 +87,7 @@ def receber_webhook():
         if not email or not status:
             return jsonify({"error": "Campos obrigatórios ausentes"}), 400
 
-        assinaturas = carregar_assinaturas()
-
-        # Atualiza ou adiciona o assinante
-        email_encontrado = False
-        for ass in assinaturas:
-            if ass["email"] == email:
-                ass["status"] = status  # Atualiza o status
-                email_encontrado = True
-                break
-
-        if not email_encontrado:
-            assinaturas.append({"email": email, "status": status})
-
-        salvar_assinaturas(assinaturas)
+        salvar_assinatura(email, status)
         return jsonify({"message": "Assinatura atualizada com sucesso!"}), 200
 
     except Exception as e:
