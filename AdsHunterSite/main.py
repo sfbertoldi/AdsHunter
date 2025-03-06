@@ -3,7 +3,7 @@ import hashlib
 import logging
 from datetime import datetime
 from flask import request, jsonify, redirect, url_for, flash, render_template
-from AdsHunterSite import app, get_db_connection  # Importa o app e a conexão do banco de dados do __init__.py
+from AdsHunterSite import app, get_db_connection
 
 # Configuração de logging
 logging.basicConfig(level=logging.INFO)
@@ -102,28 +102,39 @@ def logout():
 def receber_webhook():
     """Recebe os dados da Kiwify e atualiza o banco de dados."""
     try:
+        # Log do corpo da requisição
+        logger.info(f"Corpo da requisição: {request.get_data()}")
+
         # Obtém a assinatura do cabeçalho
         signature = request.headers.get("X-Kiwify-Signature")
         if not signature:
+            logger.error("Assinatura ausente no cabeçalho")
             return jsonify({"error": "Assinatura ausente"}), 400
 
         # Obtém o corpo da requisição (payload)
         payload = request.get_data()
+        logger.info(f"Payload recebido: {payload}")
 
         # Valida a assinatura HMAC
         if not validar_webhook(payload, signature, KIWIFY_TOKEN):
+            logger.error("Assinatura HMAC inválida")
             return jsonify({"error": "Assinatura inválida"}), 403
 
         # Converte o payload para JSON
         data = request.get_json()
         if not data:
+            logger.error("Dados inválidos: corpo da requisição vazio ou não é JSON")
             return jsonify({"error": "Dados inválidos"}), 400
+
+        # Log dos dados recebidos
+        logger.info(f"Dados recebidos: {data}")
 
         # Extrai os campos obrigatórios
         email = data.get("Customer", {}).get("email")
         status = data.get("Subscription", {}).get("status")
 
         if not email or not status:
+            logger.error("Campos obrigatórios ausentes: email ou status")
             return jsonify({"error": "Campos obrigatórios ausentes"}), 400
 
         # Salva os dados no banco de dados
