@@ -26,7 +26,7 @@ def verificar_acesso(email):
         registros = sheet.get_all_records()
 
         # Filtra os registros pelo e-mail
-        registros_usuario = [r for r in registros if r["Customer_email"] == email]
+        registros_usuario = [r for r in registros if r["customer_email"] == email]
 
         if not registros_usuario:
             return False  # Usuário não encontrado
@@ -38,7 +38,7 @@ def verificar_acesso(email):
         ultimo_evento = registros_usuario[0]
 
         # Verifica se o último evento é válido
-        if ultimo_evento["webhook_event_type"] in ["subscription_renewed", "order_approved"]:
+        if ultimo_evento["subscription_status"] in ["active"]:
             return True
         return False
     except Exception as e:
