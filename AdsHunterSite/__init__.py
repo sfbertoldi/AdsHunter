@@ -10,7 +10,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 app.config["SECRET_KEY"] = "da80480a59b1f71b360ea403dcd0aa90"
 
 # Configuração do banco de dados
-app.config["DATABASE_URL"] = "postgresql://ads_hunter_db_user:XnmbyzihE4aKpHHRGbqQUYME0AsGL7Gb@dpg-cv4tv952ng1s73fns530-a/ads_hunter_db"  # Substitua pelo Internal Database URL do Render
+app.config["DATABASE_URL"] = "postgresql://ads_hunter_db_user:XnmbyzihE4aKpHHRGbqQUYME0AsGL7Gb@dpg-cv4tv952ng1s73fns530-a.oregon-postgres.render.com/ads_hunter_db"  # Substitua pelo Internal Database URL do Render
 
 # Função para conectar ao banco de dados
 def get_db_connection():
