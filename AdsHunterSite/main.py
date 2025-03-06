@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Token da Kiwify (substitua pelo seu Token)
-KIWIFY_TOKEN = "seu_token_aqui"
+KIWIFY_TOKEN = "atoqc0xb7vf"
 
 # Funções para interagir com o banco de dados
 def salvar_assinatura(email, status):
