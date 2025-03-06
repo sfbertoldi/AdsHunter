@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Token da Kiwify (substitua pelo seu Token)
-KIWIFY_TOKEN = "atoqc0xb7vf"
+KIWIFY_TOKEN = "seu_token_aqui"
 
 # Funções para interagir com o banco de dados
 def salvar_assinatura(email, status):
@@ -102,8 +102,8 @@ def logout():
 def receber_webhook():
     """Recebe os dados da Kiwify e atualiza o banco de dados."""
     try:
-        # Log do corpo da requisição
-        logger.info(f"Corpo da requisição: {request.get_data()}")
+        # Log dos cabeçalhos recebidos
+        logger.info(f"Cabeçalhos recebidos: {request.headers}")
 
         # Obtém a assinatura do cabeçalho
         signature = request.headers.get("X-Kiwify-Signature")
